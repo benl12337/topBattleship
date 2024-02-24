@@ -81,17 +81,28 @@ function handleClick(e) {
     const x = e.target.dataset.x;
     const y = e.target.dataset.y;
     if (pTwoVisited[x][y]) {
-        gameMessage.textContent = 'Square already hit';
+        const currentMessage = gameMessage.textContent;
+        gameMessage.textContent = "Square already hit!";
+
+        setTimeout(()=>{
+            gameMessage.textContent = currentMessage;
+        }, 1250);
         return;
     }
 
+
+    // make the player's move
     newGame.makeMove(x, y);
     renderDOM();
+
+    // check if sunk
+    
+
     disableGameboard();
     gameMessage.textContent = `Computer making move...`;
     
     setTimeout(() => {
-        newGame.makeCompMove();
+        newGame.makeCompMove()
         pOneVisited = newGame.getPlayerOneVisited();
         pTwoVisited = newGame.getPlayerTwoVisited();
         renderDOM();

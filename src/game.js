@@ -40,19 +40,9 @@ function game() {
 
     const makeCompMove = ()=>{
         players[1].makeAIMove(players[0]);
-
     };
 
     const getActivePlayer = ()=> activePlayer;
-
-
-
-    /* player1.playerBoard.printBoard();
-    console.log("\n");
-    player2.playerBoard.printBoard();
-    player1.playerBoard.allShipsSunk() ? console.log(`${player2.name} WINS!!`) : console.log(`${player1.name} WINS!!!`);
-    console.log(player1.name + " " +  player1.playerBoard.shipsSunk + " ships sunk");
-    console.log(player2.name + " " +  player2.playerBoard.shipsSunk + " ships sunk"); */
 
     return { getPlayerOneBoard, getPlayerOneVisited, getPlayerTwoBoard, getPlayerTwoVisited, makeMove, makeCompMove, getActivePlayer }
 }
