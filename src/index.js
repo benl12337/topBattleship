@@ -13,110 +13,28 @@ const pTwoStatus = document.querySelector('.playerTwoStatus');
 let pOneVisited = newGame.getPlayerOneVisited();
 let pTwoVisited = newGame.getPlayerTwoVisited();
 
+function renderShipStatus(playerDiv, ship) {
+    const shell = document.createElement('div');
+    shell.className = 'statusShell';
+
+    for (let i = 0; i < ship.length; i++) {
+        const numberHits = ship.hits;
+        const statusSquare = document.createElement('div');
+        statusSquare.className = 'statusSquare';  
+
+        if (ship.isSunk()) {
+            statusSquare.classList.add("statusSquareHit");
+        } 
+        shell.appendChild(statusSquare);
+    }
+    playerDiv.append(shell);
+}
 
 function renderShips(playerDiv, playerBoard) {
     const shipsArray = playerBoard.ships;
-    // make carrier 5 long
-    const carrierShell = document.createElement('div');
-    carrierShell.className = 'statusShell';
-
-    for (let i = 0; i < playerBoard.ships[0].length; i++) {
-        // if sunk
-        const numberHits = playerBoard.ships[0].hits;
-        const isSunk = playerBoard.ships[0].isSunk();
-        console.log(isSunk);
-        const statusSquare = document.createElement('div');
-        statusSquare.className = 'statusSquare';  
-
-        if (isSunk) {
-            statusSquare.classList.add("statusSquareHit");
-        } 
-        carrierShell.appendChild(statusSquare);
+    for (let i = 0; i < shipsArray.length; i++) {
+        renderShipStatus(playerDiv,shipsArray[i]);
     }
-
-    playerDiv.appendChild(carrierShell);
-
-    // make battleship 4 long
-    const battleShipShell = document.createElement('div');
-    battleShipShell.className = 'statusShell';
-
-    for (let i = 0; i < playerBoard.ships[1].length; i++) {
-        // count number of hits
-        const numberHits = playerBoard.ships[1].hits;
-        const isSunk = playerBoard.ships[1].isSunk();
-        console.log(isSunk);
-        const statusSquare = document.createElement('div');
-        statusSquare.className = 'statusSquare';  
-
-        if (isSunk) {
-            statusSquare.classList.add("statusSquareHit");
-        } 
-        battleShipShell.appendChild(statusSquare);
-    }
-
-    playerDiv.appendChild(battleShipShell);
-
-    // make destroyer 3 long
-    const destroyerShell = document.createElement('div');
-    destroyerShell.className = 'statusShell';
-
-    for (let i = 0; i < playerBoard.ships[2].length; i++) {
-        // count number of hits
-        const numberHits = playerBoard.ships[2].hits;
-        const isSunk = playerBoard.ships[2].isSunk();
-        console.log(isSunk);
-        const statusSquare = document.createElement('div');
-        statusSquare.className = 'statusSquare';  
-
-        if (isSunk) {
-            statusSquare.classList.add("statusSquareHit");
-        } 
-        destroyerShell.appendChild(statusSquare);
-    }
-
-    playerDiv.appendChild(destroyerShell);
-
-    // make submarine 3 long
-    const submarineShell = document.createElement('div');
-    submarineShell.className = 'statusShell';
-
-    for (let i = 0; i < playerBoard.ships[3].length; i++) {
-        // count number of hits
-        const numberHits = playerBoard.ships[3].hits;
-        const isSunk = playerBoard.ships[3].isSunk();
-        console.log(isSunk);
-        const statusSquare = document.createElement('div');
-        statusSquare.className = 'statusSquare';  
-
-        if (isSunk) {
-            statusSquare.classList.add("statusSquareHit");
-        } 
-        submarineShell.appendChild(statusSquare);
-    }
-
-    playerDiv.appendChild(submarineShell);
-
-    // make patrol boat 2 long
-    const patrolShell = document.createElement('div');
-    patrolShell.className = 'statusShell';
-
-    for (let i = 0; i < playerBoard.ships[4].length; i++) {
-        // count number of hits
-        const numberHits = playerBoard.ships[4].hits;
-        const isSunk = playerBoard.ships[4].isSunk();
-        console.log(isSunk);
-        const statusSquare = document.createElement('div');
-        statusSquare.className = 'statusSquare';  
-
-        if (isSunk) {
-            statusSquare.classList.add('statusSquareHit');
-        } 
-        patrolShell.appendChild(statusSquare);
-    }
-
-    playerDiv.appendChild(patrolShell);
-
-    console.log(shipsArray);
 }
 
 function renderDOM() {
