@@ -34,15 +34,39 @@ module.exports = class gameboard {
         if (rotated) {
             // check if any boats are in the way, also check if out of bounds
             for (let i = 0; i < ship.length; i++) {
+                
+                // if out of bounds
                 if (x + i > 9) return false;
-                if (this.board[x + i][y]) return false;
+                let currRow = x + i;
+
+                // create a loop to check surrounding squares
+                for (let j = -1; j < 2; j++) {
+                    for (let k = -1; k < 2; k++) {
+                        // if within bounds of the board
+                        if (currRow + j >= 0 && currRow + j < 10 && y + k >= 0 && y + k < 10) {
+                            if (this.board[currRow + j][y + k]) return false;  
+                        }
+                    }
+                }
             }
         } else {
             // if ship is horizontal
             // check if any boats are in the way, also check if out of bounds
             for (let i = 0; i < ship.length; i++) {
+                // if out of bounds
                 if (y + i > 9) return false;
-                if (this.board[x][y + i]) return false;
+
+                let currCol = y + i;
+
+                // create a loop to check surrounding squares
+                for (let j = -1; j < 2; j++) {
+                    for (let k = -1; k < 2; k++) {
+                        // if within bounds of the board
+                        if (x + j >= 0 && x + j < 10 && currCol + k >= 0 && currCol + k < 10) {
+                            if (this.board[x + j][currCol + k]) return false;  
+                        }
+                    }
+                }
             }
         }
 

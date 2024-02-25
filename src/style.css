@@ -56,13 +56,52 @@ h3 {
 
 .hitShip {
     background: lightcoral;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .missSquare {
     background: rgb(212, 227, 236);
+    text-align: center;
+    vertical-align: middle;
 }
 
 .disabled {
     opacity: 0.85;
     pointer-events: none;
+}
+.player {
+    display: flex;
+    align-items: center;
+}
+
+.statusShell {
+    width: 100px;
+    height: 20px;
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 5px;
+}
+
+.statusSquare {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+.statusSquareHit {
+    width: 20px;
+    height: 20px;
+    background: lightcoral;
+}
+
+.playerOneStatus {
+    display: flex;
+    flex-direction: column;
+}
+
+.playerTwoStatus {
+    display: flex;
+    flex-direction: column;
 }

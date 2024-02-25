@@ -25,9 +25,9 @@ function game() {
 
 
     // loop the game until one of the boards is fully sunken
-    const getPlayerOneBoard = () => players[0].playerBoard.board;
+    const getPlayerOneBoard = () => players[0].playerBoard;
     const getPlayerOneVisited = () => players[0].playerBoard.visited;
-    const getPlayerTwoBoard = () => players[1].playerBoard.board;
+    const getPlayerTwoBoard = () => players[1].playerBoard;
     const getPlayerTwoVisited = () => players[1].playerBoard.visited;
 
     const makeMove = (x,y,)=>{
