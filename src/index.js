@@ -39,7 +39,6 @@ function renderShips(playerDiv, playerBoard) {
 
 function renderDOM() {
 
-
     // render the status messages
     playerOneBoard.innerHTML = "";
     playerTwoBoard.innerHTML = "";

@@ -110,4 +110,5 @@ h3 {
 .playerTwoStatus {
     display: flex;
     flex-direction: column;
+    transform: scaleX(-1);
 }

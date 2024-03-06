@@ -133,7 +133,6 @@ module.exports = class gameboard {
             }
             console.log(newString);
         } 
-
     }
 
     allShipsSunk() {
