@@ -3,7 +3,6 @@ module.exports =  class ship {
         this.name = name;
         this.length = length;
         this.hits = 0;
-        this.sunk = this.isSunk();
     }
 
     hit() {

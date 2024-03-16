@@ -2,7 +2,7 @@ const ship = require('./ship');
 
 module.exports = class gameboard {
     constructor() {
-        this.board = this.createBoard(null);
+        this.board = this.createBoard(0);
         this.visited = this.createBoard(false);
         this.ships = [
             new ship("Carrier", 5),
@@ -14,7 +14,7 @@ module.exports = class gameboard {
         this.shipsSunk = 0;
     }
 
-    // create the board array and push null onto each one
+    // create the board array and push value onto each square
     createBoard(value) {
         const boardArray = [];
         for (let i = 0; i < 10; i++) {
@@ -28,6 +28,7 @@ module.exports = class gameboard {
 
     placeShip(x, y, ship, rotated) {
         // check if x and y are in bounds
+        if (!x || !y) return false;
         if (x < 0 || x > 9 || y < 0 || y > 9) return false;
 
         // if ship is vertical
@@ -73,9 +74,9 @@ module.exports = class gameboard {
         // ship can be placed. mark the ship's location and return true
         for (let i = 0; i < ship.length; i++) {
             if (rotated) {
-                this.board[x + i][y] = ship.name;
+                this.board[x + i][y] = ship;
             } else {
-                this.board[x][y + i] = ship.name;
+                this.board[x][y + i] = ship;
             }
         }
         return true;
@@ -90,21 +91,26 @@ module.exports = class gameboard {
         };
         
         // if it hits a ship
-        if (this.board[x][y] != null) {
-            this.ships.forEach((currShip) => {
-                if (this.board[x][y] == currShip.name) {
-                    // record a hit
-                    currShip.hit();
-                    console.log(`Hit ${currShip.name} at ${x}, ${y}!`);
+        if (this.board[x][y]) {
+            // this.ships.forEach((currShip) => {
+            //     if (this.board[x][y] == currShip.name) {
+            //         // record a hit
+            //         currShip.hit();
+            //         console.log(`Hit ${currShip.name} at ${x}, ${y}!`);
 
-                    // check if ship sunk
-                    if (currShip.isSunk()) {
-                        // do something
-                        this.shipsSunk += 1;
-                        console.log(`${currShip.name} sunk!!`);
-                    }
-                }
-            });
+            //         // check if ship sunk
+            //         if (currShip.isSunk()) {
+            //             // do something
+            //             this.shipsSunk += 1;
+            //             console.log(`${currShip.name} sunk!!`);
+            //         }
+            //     }
+            // });
+            this.board[x][y].hit();
+            console.log(`Hit ${this.board[x][y].name} at ${x}, ${y}!`);
+            if (this.board[x][y].sunk) {
+                this.board[x][y].shipsSunk += 1;
+            } 
         } else {
             // do something
             console.log(`Hit Water! at ${x}, ${y}`);
