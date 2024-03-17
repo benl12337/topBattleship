@@ -77,6 +77,22 @@ function renderShips(playerDiv, ships) {
     }
 }
 
+function endGame(activePlayer) {
+    gameMessage.textContent = `${activePlayer.name} wins!`;
+
+    // disable both boards
+    const playerOneArray = document.querySelectorAll('.board1 div');
+    const playerTwoArray = document.querySelectorAll('.board2 div');
+
+    playerOneArray.forEach((box) => {
+        box.classList.add('disabled');
+    });
+
+    playerTwoArray.forEach((box) => {
+        box.classList.add('disabled');
+    });
+}
+
 function game() {
 
     // initialise player1 and AI (their gameboards will be initialised as well)
@@ -137,23 +153,9 @@ function game() {
                     if (players[1].playerBoard.board[x][y].isSunk()) {
                         console.log(players[1].playerBoard.shipsSunk);
                         // check if game has been won
-                        if (players[1].playerBoard.shipsSunk==5) {
-                            gameMessage.textContent = `${players[0].name} wins!`;
+                        if (players[1].playerBoard.shipsSunk == 5) {
                             renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
-                            // disable both boards
-
-                            const playerOneArray = document.querySelectorAll('.board1 div');
-                            const playerTwoArray = document.querySelectorAll('.board2 div');
-
-                            playerOneArray.forEach((box)=>{
-                                box.classList.add('disabled');
-                            });
-
-                            playerTwoArray.forEach((box)=>{
-                                box.classList.add('disabled');
-                            });
-
-
+                            endGame(activePlayer);
                             return;
                         } else {
                             gameMessage.textContent = `${players[1].playerBoard.board[x][y].name} sunk!`;
@@ -169,7 +171,7 @@ function game() {
 
             renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
             const boxArray2 = document.querySelectorAll('.board2 div');
-            boxArray2.forEach((element)=>{
+            boxArray2.forEach((element) => {
                 element.classList.add('disabled');
             });
             activePlayer = activePlayer == players[0] ? players[1] : players[0];
@@ -202,9 +204,12 @@ function game() {
                 if (players[0].playerBoard.board[x][y]) {
                     if (players[0].playerBoard.board[x][y].isSunk()) {
                         gameMessage.textContent = `${players[0].playerBoard.board[x][y].name} sunk!`;
-
-                        // if ship is sunken, every square surrounding the ship should also be sunken
-                        // how would I check surrounding squares
+                        // if ship sunken, check if computer wins
+                        if (players[0].playerBoard.shipsSunk == 5) {
+                            renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
+                            endGame(activePlayer);
+                            return;
+                        }
 
                     } else {
                         gameMessage.textContent = `It's a hit!`;
@@ -219,6 +224,7 @@ function game() {
                 boxArray.forEach((box) => {
                     box.classList.add("disabled");
                 });
+
                 activePlayer = activePlayer == players[0] ? players[1] : players[0];
                 playRound();
             }, 2200)
