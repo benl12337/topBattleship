@@ -92,24 +92,10 @@ module.exports = class gameboard {
         
         // if it hits a ship
         if (this.board[x][y]) {
-            // this.ships.forEach((currShip) => {
-            //     if (this.board[x][y] == currShip.name) {
-            //         // record a hit
-            //         currShip.hit();
-            //         console.log(`Hit ${currShip.name} at ${x}, ${y}!`);
-
-            //         // check if ship sunk
-            //         if (currShip.isSunk()) {
-            //             // do something
-            //             this.shipsSunk += 1;
-            //             console.log(`${currShip.name} sunk!!`);
-            //         }
-            //     }
-            // });
             this.board[x][y].hit();
             console.log(`Hit ${this.board[x][y].name} at ${x}, ${y}!`);
-            if (this.board[x][y].sunk) {
-                this.board[x][y].shipsSunk += 1;
+            if (this.board[x][y].isSunk()) {
+                this.shipsSunk += 1;
             } 
         } else {
             // do something

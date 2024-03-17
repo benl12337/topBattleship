@@ -22,10 +22,12 @@ function initialiseShips(player, automated) {
     }
 }
 
-function renderDOM(boardDiv, array, visited, hidden) {
+function renderDOM(boardDiv, playerDiv, player, visited, hidden) {
     boardDiv.innerHTML = "";
 
-    array.forEach((row, x) => {
+    renderShips(playerDiv, player.playerBoard.ships);
+
+    player.playerBoard.board.forEach((row, x) => {
         row.forEach((square, y) => {
             const squareDiv = document.createElement('div');
 
@@ -51,6 +53,30 @@ function renderDOM(boardDiv, array, visited, hidden) {
     });
 }
 
+function renderShipStatus(playerDiv, ship) {
+    const shell = document.createElement('div');
+    shell.className = 'statusShell';
+
+    for (let i = 0; i < ship.length; i++) {
+        const numberHits = ship.hits;
+        const statusSquare = document.createElement('div');
+        statusSquare.className = 'statusSquare';
+
+        if (ship.isSunk()) {
+            statusSquare.classList.add("statusSquareHit");
+        }
+        shell.appendChild(statusSquare);
+    }
+    playerDiv.append(shell);
+}
+
+function renderShips(playerDiv, ships) {
+    playerDiv.innerHTML = "";
+    for (let i = 0; i < ships.length; i++) {
+        renderShipStatus(playerDiv, ships[i]);
+    }
+}
+
 function game() {
 
     // initialise player1 and AI (their gameboards will be initialised as well)
@@ -69,8 +95,8 @@ function game() {
     console.log(pTwoArray);
 
     // render the gameboards
-    renderDOM(gameboardOne, pOneArray, pOneVisited);
-    renderDOM(gameboardTwo, pTwoArray, pTwoVisited, true);
+    renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
+    renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
 
 
     // automatically place the ships for each player on their boards
@@ -79,8 +105,8 @@ function game() {
     // console.log('user input done');
     initialiseShips(players[1], true);
 
-    renderDOM(gameboardOne, pOneArray, pOneVisited, false);
-    renderDOM(gameboardTwo, pTwoArray, pTwoVisited, true);
+    renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
+    renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
 
 
     // take turns going
@@ -106,21 +132,46 @@ function game() {
 
             // if it's a hit, check if a ship was hit
             if (players[1].playerBoard.board[x][y]) {
-                gameMessage.textContent = "It's a hit!"
-                console.log(players[1].playerBoard.board[x][y]);
                 // check if sunk
                 if (players[1].playerBoard.board[x][y]) {
                     if (players[1].playerBoard.board[x][y].isSunk()) {
-                        gameMessage.textContent = `${players[1].playerBoard.board[x][y].name} sunk!`;
+                        console.log(players[1].playerBoard.shipsSunk);
+                        // check if game has been won
+                        if (players[1].playerBoard.shipsSunk==5) {
+                            gameMessage.textContent = `${players[0].name} wins!`;
+                            renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
+                            // disable both boards
+
+                            const playerOneArray = document.querySelectorAll('.board1 div');
+                            const playerTwoArray = document.querySelectorAll('.board2 div');
+
+                            playerOneArray.forEach((box)=>{
+                                box.classList.add('disabled');
+                            });
+
+                            playerTwoArray.forEach((box)=>{
+                                box.classList.add('disabled');
+                            });
+
+
+                            return;
+                        } else {
+                            gameMessage.textContent = `${players[1].playerBoard.board[x][y].name} sunk!`;
+                        }
+
                     } else {
                         gameMessage.textContent = `It was a hit!`;
-
                     }
                 }
+            } else {
+                gameMessage.textContent = 'Miss!';
             }
 
-            renderDOM(gameboardTwo, pTwoArray, pTwoVisited, true);
-
+            renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
+            const boxArray2 = document.querySelectorAll('.board2 div');
+            boxArray2.forEach((element)=>{
+                element.classList.add('disabled');
+            });
             activePlayer = activePlayer == players[0] ? players[1] : players[0];
             playRound();
         }
@@ -136,15 +187,41 @@ function game() {
             });
         } else {
             // computer turn
-            players[1].makeAIMove(players[0]);
-            renderDOM(gameboardOne, pOneArray, pOneVisited, false);
-            // disable playerOneGameboard
-            const boxArray = document.querySelectorAll('.board2 div');
-            boxArray.forEach((box) => {
-                box.classList.add("disabled");
-            });
-            activePlayer = activePlayer == players[0] ? players[1] : players[0];
-            playRound();
+            setTimeout(() => {
+                gameMessage.textContent = "Computer making move...";
+            }, 900);
+            setTimeout(() => {
+                let x = Math.floor(Math.random() * 10);
+                let y = Math.floor(Math.random() * 10);
+
+                while (!players[1].makeMove(x, y, players[0])) {
+                    x = Math.floor(Math.random() * 10);
+                    y = Math.floor(Math.random() * 10);
+                }
+
+                if (players[0].playerBoard.board[x][y]) {
+                    if (players[0].playerBoard.board[x][y].isSunk()) {
+                        gameMessage.textContent = `${players[0].playerBoard.board[x][y].name} sunk!`;
+
+                        // if ship is sunken, every square surrounding the ship should also be sunken
+                        // how would I check surrounding squares
+
+                    } else {
+                        gameMessage.textContent = `It's a hit!`;
+                    }
+                } else {
+                    gameMessage.textContent = 'Miss!';
+                }
+
+                renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
+                // disable playerOneGameboard
+                const boxArray = document.querySelectorAll('.board2 div');
+                boxArray.forEach((box) => {
+                    box.classList.add("disabled");
+                });
+                activePlayer = activePlayer == players[0] ? players[1] : players[0];
+                playRound();
+            }, 2200)
         }
     }
 
