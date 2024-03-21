@@ -28,14 +28,14 @@ module.exports = class gameboard {
 
     placeShip(x, y, ship, rotated) {
         // check if x and y are in bounds
-        if (!x || !y) return false;
+        if (x == null || y == null) return false;
         if (x < 0 || x > 9 || y < 0 || y > 9) return false;
 
         // if ship is vertical
         if (rotated) {
             // check if any boats are in the way, also check if out of bounds
             for (let i = 0; i < ship.length; i++) {
-                
+
                 // if out of bounds
                 if (x + i > 9) return false;
                 let currRow = x + i;
@@ -45,7 +45,8 @@ module.exports = class gameboard {
                     for (let k = -1; k < 2; k++) {
                         // if within bounds of the board
                         if (currRow + j >= 0 && currRow + j < 10 && y + k >= 0 && y + k < 10) {
-                            if (this.board[currRow + j][y + k]) return false;  
+                            if (this.board[currRow + j][y + k]) return false;
+
                         }
                     }
                 }
@@ -57,6 +58,7 @@ module.exports = class gameboard {
                 // if out of bounds
                 if (y + i > 9) return false;
 
+
                 let currCol = y + i;
 
                 // create a loop to check surrounding squares
@@ -64,7 +66,7 @@ module.exports = class gameboard {
                     for (let k = -1; k < 2; k++) {
                         // if within bounds of the board
                         if (x + j >= 0 && x + j < 10 && currCol + k >= 0 && currCol + k < 10) {
-                            if (this.board[x + j][currCol + k]) return false;  
+                            if (this.board[x + j][currCol + k]) return false;
                         }
                     }
                 }
@@ -89,14 +91,14 @@ module.exports = class gameboard {
             //console.log('visited!!');
             return false;
         };
-        
+
         // if it hits a ship
         if (this.board[x][y]) {
             this.board[x][y].hit();
             console.log(`Hit ${this.board[x][y].name} at ${x}, ${y}!`);
             if (this.board[x][y].isSunk()) {
                 this.shipsSunk += 1;
-            } 
+            }
         } else {
             // do something
             console.log(`Hit Water! at ${x}, ${y}`);
@@ -109,22 +111,19 @@ module.exports = class gameboard {
     printBoard() {
         console.log("  0123456789");
         for (let i = 0; i < this.board.length; i++) {
-            
-            let newString = "" + i + " ";
+
+            let newString = i + " ";
             for (let j = 0; j < this.board.length; j++) {
-                if (this.visited[i][j] && this.board[i][j]) {
-                    // if visited
-                    newString += "x";
-                } else if (this.board[i][j]) {
+                if (this.board[i][j]) {
                     // if unvisited ship
-                    newString += this.board[i][j].split("")[0];
+                    newString += this.board[i][j].name.split("")[0];
                 } else {
                     // if unvisited
                     newString += "_";
                 }
             }
             console.log(newString);
-        } 
+        }
     }
 
     allShipsSunk() {

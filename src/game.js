@@ -6,18 +6,21 @@ const gameMessage = document.querySelector('.game-message h3');
 const pOneStatus = document.querySelector('.playerOneStatus');
 const pTwoStatus = document.querySelector('.playerTwoStatus');
 
+let rotated = false;
 
-function initialiseShips(player, automated) {
+document.addEventListener('keypress', (e) => {
+    if (e.key == "r" || e.key == "R") {
+        rotated = rotated ? false : true;
+        console.log(rotated);
+    }
+});
+
+function initialiseShips(player) {
     // loop through until all ships are placed
     for (let i = 0; i < 5; i++) {
         // place the ships randomly
-        if (automated) {
-            const rotated = Math.random() < 0.5 ? true : false;
-            while (!player.playerBoard.placeShip(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), player.playerBoard.ships[i], rotated)) {
-                console.log("attempt");
-            }
-        } else {
-            // logic to let the user input their own board
+        const rotated = Math.random() < 0.5 ? true : false;
+        while (!player.playerBoard.placeShip(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), player.playerBoard.ships[i], true)) {
         }
     }
 }
@@ -94,42 +97,106 @@ function endGame(activePlayer) {
 }
 
 function game() {
-
     // initialise player1 and AI (their gameboards will be initialised as well)
     const players = [new player('Player'), new player('Computer')];
     let activePlayer = players[0];
     let gameWon = false;
-
-    // render the divs
+    let shipsPlaced = 0;
     const pOneArray = players[0].playerBoard.board;
     const pOneVisited = players[0].playerBoard.visited;
     const pTwoArray = players[1].playerBoard.board;
     const pTwoVisited = players[1].playerBoard.visited;
+    gameMessage.textContent = "Press 'r' to rotate";
 
 
-    console.log(pOneArray);
-    console.log(pTwoArray);
+    // handle the user input
+    function handleInput(e) {
+
+        x = parseInt(e.target.dataset.x);
+        y = parseInt(e.target.dataset.y);
+        console.log(players[0]);
+        const placed = players[0].playerBoard.placeShip(x, y, players[0].playerBoard.ships[shipsPlaced], rotated);
+        console.log("placed: ", placed);
+        // if ship is successfully placed
+        if (placed) {
+            console.log('ship placed');
+            players[0].playerBoard.printBoard();
+            if (shipsPlaced == 4) {
+                // remove event listeners
+                const squares = document.querySelectorAll('.board1 div');
+                squares.forEach((square) => {
+                    square.removeEventListener('click', handleInput);
+                });
+
+                // start game
+                initialiseShips(players[1]);
+                renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
+                renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
+                playRound();
+            }
+            shipsPlaced++;
+        }
+    }
 
     // render the gameboards
     renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
     renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
 
+    // add an event listener to the divs
+    const squares = document.querySelectorAll('.board1 div');
+    let test = 0;
 
-    // automatically place the ships for each player on their boards
-    // console.log('taking user input');
-    initialiseShips(players[0], true);
-    // console.log('user input done');
-    initialiseShips(players[1], true);
+    squares.forEach((square) => {
+        square.addEventListener('mouseover', (e) => {
+            const x = parseInt(e.target.dataset.x);
+            const y = parseInt(e.target.dataset.y);
+            const shipLength = players[0].playerBoard.ships[shipsPlaced].length;
 
-    renderDOM(gameboardOne, pOneStatus, players[0], pOneVisited, false);
-    renderDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
+            if (rotated) {
+                console.log("HI");
+                for (let i = 0; i < shipLength; i++) {
+                    if (x + i < 10) {
+                        const adjacentBox = document.querySelector(`[data-x="${x+i}"][data-y="${y}"]`);
+                        console.log(" The adjacent box is" + adjacentBox);
+                        adjacentBox.classList.add('userInput');
+                    }
+                }
+            } else {
+                console.log("TEA");
+                for (let i = 0; i < shipLength; i++) {
+                    if (y + i < 10) {
+                        const adjacentBox = document.querySelector(`[data-x="${x}"][data-y="${y+i}"]`);
+                        console.log(" The adjacent box is" + adjacentBox);
+                        console.log(adjacentBox);
+                        adjacentBox.classList.add('userInput');
+                    }
+                }
+            }
+
+        });
+        square.addEventListener('mouseout', (e) => {
+            const x = e.target.dataset.x;
+            const y = e.target.dataset.y;
+            const boxes = document.querySelectorAll(`.board1 [data-x="${x}"]`);
+            boxes.forEach((box) => {
+                box.classList.remove('userInput');
+            });
+            const boxes2 = document.querySelectorAll(`.board1 [data-y="${y}"]`);
+            boxes2.forEach((box) => {
+                box.classList.remove('userInput');
+            });
+        });
+        square.addEventListener('click', handleInput);
+    });
 
 
-    // take turns going
-    // player goes first
+
+
+
 
     function playRound() {
 
+        // handle the user's click
         function handleClick(e) {
             const x = e.target.dataset.x;
             const y = e.target.dataset.y;
@@ -179,7 +246,7 @@ function game() {
         }
 
 
-        // user turn
+        // handle the user turn
         if (activePlayer == players[0]) {
             // add event listeners to the gameboard
             const boxArray = document.querySelectorAll('.board2 div');
@@ -230,9 +297,6 @@ function game() {
             }, 2200)
         }
     }
-
-    playRound();
-
 }
 
 

@@ -114,3 +114,8 @@ h3 {
     flex-direction: column;
     transform: scaleX(-1);
 }
+
+.userInput {
+    background: rgb(239, 241, 241);
+    border: 1px solid grey;
+}
