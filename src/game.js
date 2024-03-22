@@ -1,21 +1,14 @@
 const player = require('./player');
 
+// define constants and variables
 const gameboardOne = document.querySelector('.board1');
 const gameboardTwo = document.querySelector('.board2');
 const gameMessage = document.querySelector('.game-message h3');
 const pOneStatus = document.querySelector('.playerOneStatus');
 const pTwoStatus = document.querySelector('.playerTwoStatus');
-
 let rotated = false;
 
-// listen for rotate keypress
-document.addEventListener('keypress', (e) => {
-    if (e.key == "r" || e.key == "R") {
-        rotated = rotated ? false : true;
-        console.log(rotated);
-    }
-});
-
+// create ship status icons
 function initialiseShips(player) {
     // loop through until all ships are placed
     for (let i = 0; i < 5; i++) {
@@ -26,11 +19,10 @@ function initialiseShips(player) {
     }
 }
 
-// append a grid to the gameboard
+// append a blank grid to the gameboard
 function initialiseDOM(boardDiv, player) {
-    
-    player.playerBoard.board.forEach((row, x)=>{
-        row.forEach((square,y)=>{
+    player.playerBoard.board.forEach((row, x) => {
+        row.forEach((square, y) => {
             const squareDiv = document.createElement('div');
             squareDiv.dataset.x = x;
             squareDiv.dataset.y = y;
@@ -45,7 +37,7 @@ function updateDOM(boardDiv, playerDiv, player, visited, hidden) {
     renderShips(playerDiv, player.playerBoard.ships);
     // get all the squares in an array
     const squares = boardDiv.querySelectorAll(`div`);
-    squares.forEach((square)=>{
+    squares.forEach((square) => {
         const x = square.dataset.x;
         const y = square.dataset.y;
 
@@ -121,38 +113,54 @@ function game() {
     const pTwoVisited = players[1].playerBoard.visited;
     gameMessage.textContent = "Place Carrier";
 
+    // render the ship statuses
     renderShips(pOneStatus, players[0].playerBoard.ships);
     renderShips(pTwoStatus, players[1].playerBoard.ships);
 
-    // handle the user input
+
+
+    // listen for rotate keypress
+    document.addEventListener('keypress', (e) => {
+        if (e.key == "r" || e.key == "R") {
+            rotated = rotated ? false : true;
+        }
+    });
+
+
+    // handle user ipnutting the ship locations
     function handleInput(e) {
         x = parseInt(e.target.dataset.x);
         y = parseInt(e.target.dataset.y);
-        console.log(players[0]);
         const placed = players[0].playerBoard.placeShip(x, y, players[0].playerBoard.ships[shipsPlaced], rotated);
-        console.log("placed: ", placed);
-        
-        switch(shipsPlaced) {
-            case 0:
-                gameMessage.textContent = 'Place Battleship';
-                break;
-            case 1:
-                gameMessage.textContent = 'Place Destoyer';
-                break;
-            case 2:
-                gameMessage.textContent = 'Place Submarine';
-                break;
-            case 3:
-                gameMessage.textContent = 'Place Patrol Boat';
-                break;
-        }
-        
-        // if ship is successfully placed
+        console.log("placed" + placed + "number of ships placed" + shipsPlaced);
+
+        // if ship is successfully placed, update the DOM
+        // check if all ships have been placed, then start the game
         if (placed) {
-            console.log('ship placed');
-            updateDOM(gameboardOne,pOneStatus, players[0], players[0].playerBoard.visited, false);
-            players[0].playerBoard.printBoard();
-            if (shipsPlaced == 4) {
+            shipsPlaced++;
+
+            switch (shipsPlaced) {
+                case 0:
+                    gameMessage.textContent = 'Place Carrier';
+                    break;
+                case 1:
+                    gameMessage.textContent = 'Place Battleship';
+                    break;
+                case 2:
+                    gameMessage.textContent = 'Place Destoyer';
+                    break;
+                case 3:
+                    gameMessage.textContent = 'Place Submarine';
+                    break;
+                case 4:
+                    gameMessage.textContent = 'Place Patrol Boat';
+                    break;
+            }
+            
+
+            updateDOM(gameboardOne, pOneStatus, players[0], players[0].playerBoard.visited, false);
+
+            if (shipsPlaced == 5) {
                 // remove event listeners
                 const squares = document.querySelectorAll('.board1 div');
                 squares.forEach((square) => {
@@ -165,7 +173,6 @@ function game() {
                 updateDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
                 playRound();
             }
-            shipsPlaced++;
         }
     }
 
@@ -175,8 +182,8 @@ function game() {
 
     // add an event listener to the divs
     const squares = document.querySelectorAll('.board1 div');
-    let test = 0;
 
+    // get ship location inputs
     squares.forEach((square) => {
         square.addEventListener('mouseover', (e) => {
             const x = parseInt(e.target.dataset.x);
@@ -184,17 +191,16 @@ function game() {
             const shipLength = players[0].playerBoard.ships[shipsPlaced].length;
 
             if (rotated) {
-                console.log("HI");
                 for (let i = 0; i < shipLength; i++) {
                     if (x + i < 10) {
-                        const adjacentBox = document.querySelector(`[data-x="${x+i}"][data-y="${y}"]`);
+                        const adjacentBox = document.querySelector(`[data-x="${x + i}"][data-y="${y}"]`);
                         adjacentBox.classList.add('userInput');
                     }
                 }
             } else {
                 for (let i = 0; i < shipLength; i++) {
                     if (y + i < 10) {
-                        const adjacentBox = document.querySelector(`[data-x="${x}"][data-y="${y+i}"]`);
+                        const adjacentBox = document.querySelector(`[data-x="${x}"][data-y="${y + i}"]`);
                         adjacentBox.classList.add('userInput');
                     }
                 }
@@ -213,21 +219,22 @@ function game() {
                 box.classList.remove('userInput');
             });
         });
+
+        // add an event listener to place ship
         square.addEventListener('click', handleInput);
     });
 
 
-
-
-
-
+    // handles the logic to advance the round
     function playRound() {
+
+        // initialise the game message
         gameMessage.textContent = `${activePlayer.name}'s turn`
+
         // handle the user's click
         function handleClick(e) {
             const x = e.target.dataset.x;
             const y = e.target.dataset.y;
-            console.log(x, y);
             if (players[1].playerBoard.visited[x][y]) {
                 gameMessage.textContent = "Square already hit!";
                 return;
@@ -245,7 +252,6 @@ function game() {
                 // check if sunk
                 if (players[1].playerBoard.board[x][y]) {
                     if (players[1].playerBoard.board[x][y].isSunk()) {
-                        console.log(players[1].playerBoard.shipsSunk);
                         // check if game has been won
                         if (players[1].playerBoard.shipsSunk == 5) {
                             updateDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
@@ -263,18 +269,26 @@ function game() {
                 gameMessage.textContent = 'Miss!';
             }
 
+            // update the gameboard to reflect move
             updateDOM(gameboardTwo, pTwoStatus, players[1], pTwoVisited, true);
+
+            // disable gameboard
             const boxArray2 = document.querySelectorAll('.board2 div');
             boxArray2.forEach((element) => {
                 element.classList.add('disabled');
             });
+
+            // switch active player
             activePlayer = activePlayer == players[0] ? players[1] : players[0];
+
+            // start the next round
             playRound();
         }
 
 
         // handle the user turn
         if (activePlayer == players[0]) {
+
             // add event listeners to the gameboard
             const boxArray = document.querySelectorAll('.board2 div');
             boxArray.forEach((box) => {
@@ -282,6 +296,8 @@ function game() {
                 box.addEventListener('click', handleClick);
             });
         } else {
+
+
             // computer turn
             setTimeout(() => {
                 gameMessage.textContent = "Computer making move...";
