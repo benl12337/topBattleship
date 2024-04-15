@@ -282,7 +282,9 @@ function game() {
             activePlayer = activePlayer == players[0] ? players[1] : players[0];
 
             // start the next round
-            playRound();
+            setTimeout(() => {
+                    playRound();
+            },1000);
         }
 
 
@@ -336,7 +338,9 @@ function game() {
                 });
 
                 activePlayer = activePlayer == players[0] ? players[1] : players[0];
-                playRound();
+                setTimeout(() => {
+                    playRound();
+                }, 1000);
             }, 2200)
         }
     }
