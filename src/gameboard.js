@@ -26,6 +26,12 @@ module.exports = class gameboard {
         return boardArray;
     }
 
+    /* IMO this function breaks "Single Responsibility Principle" a function should only do one thing,
+        here this function does at least 2 things. It checks bounds and also places the ship.
+        So to a caller of a function, I'm not sure if this function checks if a ship can be placed OR it places my ship OR both
+
+        I'd create a new function for the coordinate checking and have that function called BEFORE I call placeShip()
+    */
     placeShip(x, y, ship, rotated) {
         // check if x and y are in bounds
         if (x == null || y == null) return false;

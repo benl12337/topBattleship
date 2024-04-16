@@ -74,3 +74,15 @@ gameController();*/
 game();
 
 
+
+/*
+    General Comments
+    
+    - Overall this is solid, the below comments are nit picky
+    - Name of classes are generally capitalized
+    - You have a few unused variables, perhaps you were using them for something else but otherwise they can clutter up the code
+    - Take advantage of extracting bits of logic into method names and harder to read code into variable names
+        - For example something like `players[0].playerBoard.board[x][y]` you can give a variable name
+        - You want to use method names and variables names to almost make your code look like english and easy to read
+    - Overall class structure is fine, I'd just try and turn game.js into a class (maybe even 2 if there's a logical way to abstract it)
+*/

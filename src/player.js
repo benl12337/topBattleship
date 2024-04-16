@@ -15,6 +15,10 @@ module.exports = class player {
         // end loop when a move is successful
         while(!this.makeMove(Math.floor(Math.random() * 10),Math.floor(Math.random() * 10),  enemy)) {
         }
+        /* Similar comment to what I made with in `initialiseShips` of game.js 
+        makeMove() is being used to track whos move it is but also make the move
+        Potentially, you could track who's turn it is through a new method on the Game class or something
+        */
     }
 }
 

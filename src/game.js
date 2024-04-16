@@ -13,15 +13,19 @@ function initialiseShips(player) {
     // loop through until all ships are placed
     for (let i = 0; i < 5; i++) {
         // place the ships randomly
-        const rotated = Math.random() < 0.5 ? true : false;
-        while (!player.playerBoard.placeShip(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), player.playerBoard.ships[i], true)) {
+        const rotated = Math.random() < 0.5 ? true : false; // Unused variable and it also "shadows" variable name on line 9 ***
+        while (!player.playerBoard.placeShip(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), player.playerBoard.ships[i], true)) { 
         }
+        /* This while loop is hard to read
+        For example, I would extract `Math.floor(Math.random() * 10)` to another method so that the method name makes it clear what you're trying to achieve
+        */
     }
 }
 
 // append a blank grid to the gameboard
 function initialiseDOM(boardDiv, player) {
     player.playerBoard.board.forEach((row, x) => {
+        // Use _ for unused variables
         row.forEach((square, y) => {
             const squareDiv = document.createElement('div');
             squareDiv.dataset.x = x;
@@ -345,6 +349,24 @@ function game() {
         }
     }
 }
+
+/* 
+    This should be a class. We have lots of methods/data in this file that should be encapsulated into a class.
+    You also have classes for your other "entities", so it would only make sense to make this a class too.
+
+    game() can be separated into many methods IMO. It is way too long and doing many things.
+    Just by the method name, it is not 100% clear on what the method achieves, so if I was working on this project
+    and I wanted to call .game(), I wouldn't know what it does.
+
+    The event listener, handleInput(), etc... can be moved outside the method. You generally don't want methods inside methods.
+    Same thing with handleClick() inside playRound()
+    
+    A lot of the logic can also be extracted into another method, for example line 191 to 229. You have a comment stating what it does,
+    why not extract this into a method with a similar name such as getShipLocationInputs(). This makes your code easier to read
+    and easier to test (you can test methods by themselves).
+
+
+*/
 
 
 
